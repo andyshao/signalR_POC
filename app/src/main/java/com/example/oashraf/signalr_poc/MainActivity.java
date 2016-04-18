@@ -10,8 +10,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements ILocationCallBack
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements ILocationCallBack
 //            if (editText != null && editText.getText().length() > 0)
 //            {
             String message = "Some Message from Karwa";
-            mService.sendMessage(message);
+            mService.sendData(message);
 //            }
         }
     }

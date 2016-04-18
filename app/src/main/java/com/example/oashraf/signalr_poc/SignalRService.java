@@ -74,31 +74,30 @@ public class SignalRService extends Service
         }
     }
 
-    public void sendMessage(String message)
+    public void sendData(String data)
     {
 
         String SERVER_METHOD_SEND = "iAmAvailable";
         final String string = new String();
 
-        mHubProxy.invoke(new String(), SERVER_METHOD_SEND, sp.getString("user_id", null), sp.getString("pass", null), "TransMedic").done(new Action()
-        {
-            @Override
-            public void run(Object o) throws Exception
-            {
+        mHubProxy.invoke(new String(), SERVER_METHOD_SEND, sp.getString("user_id", null), sp.getString("pass", null), "TransMedic")
+                .done(new Action()
+                {
+                    @Override
+                    public void run(Object o) throws Exception
+                    {
 
-                Log.e(TAG, o.toString());
+                        Log.e(TAG, o.toString());
 
-            }
+                    }
+                }).onError(new ErrorCallback()
+                {
+                    @Override
+                    public void onError(Throwable throwable)
+                    {
 
-
-        }).onError(new ErrorCallback()
-        {
-            @Override
-            public void onError(Throwable throwable)
-            {
-
-            }
-        });
+                    }
+                });
     }
 
     private void startSignalR()
@@ -133,7 +132,7 @@ public class SignalRService extends Service
 
         }
 
-        sendMessage("");
+        sendData("");
     }
 
     @Override
