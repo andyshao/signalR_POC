@@ -24,7 +24,7 @@ import microsoft.aspnet.signalr.client.transport.ServerSentEventsTransport;
 
 public class SignalRService extends Service
 {
-    private static final String TAG = "Service";
+    private static final String TAG = "SignalRService";
     private static final String SHARED_PREFS = "shared_pref";
     private HubConnection mHubConnection;
     private HubProxy mHubProxy;
@@ -74,7 +74,7 @@ public class SignalRService extends Service
         }
     }
 
-    public void sendMessage()
+    public void sendMessage(String message)
     {
 
         String SERVER_METHOD_SEND = "iAmAvailable";
@@ -133,7 +133,7 @@ public class SignalRService extends Service
 
         }
 
-        sendMessage();
+        sendMessage("");
     }
 
     @Override
