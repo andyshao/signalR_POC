@@ -77,10 +77,10 @@ public class SignalRService extends Service
     public void sendData(String data)
     {
 
-        String SERVER_METHOD_SEND = "iAmAvailable";
+        String SERVER_METHOD_SEND = "sendChat";
         final String string = new String();
 
-        mHubProxy.invoke(new String(), SERVER_METHOD_SEND, sp.getString("user_id", null), sp.getString("pass", null), "TransMedic")
+        mHubProxy.invoke(string, SERVER_METHOD_SEND, "osama", "click123", "TransMedic")
                 .done(new Action()
                 {
                     @Override
@@ -105,7 +105,8 @@ public class SignalRService extends Service
 
         Platform.loadPlatformComponent(new AndroidPlatformComponent());
 
-        String serverUrl = "http://transit.alwaysaware.org/signalr";
+//        String serverUrl = "http://transit.alwaysaware.org/signalr";
+        String serverUrl = "http://192.168.0.125:40722/chat/chat";
 
         mHubConnection = new HubConnection(serverUrl);
 
