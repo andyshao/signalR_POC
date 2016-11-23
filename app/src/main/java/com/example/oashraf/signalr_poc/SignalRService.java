@@ -18,12 +18,18 @@ import microsoft.aspnet.signalr.client.SignalRFuture;
 import microsoft.aspnet.signalr.client.http.android.AndroidPlatformComponent;
 import microsoft.aspnet.signalr.client.hubs.HubConnection;
 import microsoft.aspnet.signalr.client.hubs.HubProxy;
-import microsoft.aspnet.signalr.client.transport.ClientTransport;
-import microsoft.aspnet.signalr.client.transport.ServerSentEventsTransport;
+import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler1;
 
 
 public class SignalRService extends Service
 {
+
+    public static final String serverUrl = "http://192.168.0.125:38860/";
+
+    public static final String SERVER_HUB_CHAT = "moveShapeHub";
+    public static final String SERVER_METHOD_SEND = "updateModel";
+    public static final String CLIENT_METHOD_RECEIVE = "showDate";
+
     private static final String TAG = "SignalRService";
     private static final String SHARED_PREFS = "shared_pref";
     private HubConnection mHubConnection;
@@ -77,27 +83,25 @@ public class SignalRService extends Service
     public void sendData(String data)
     {
 
-        String SERVER_METHOD_SEND = "sendChat";
-        final String string = new String();
 
-        mHubProxy.invoke(string, SERVER_METHOD_SEND, "osama", "click123", "TransMedic")
+        mHubProxy.invoke(String.class, SERVER_METHOD_SEND, data)
                 .done(new Action()
                 {
                     @Override
                     public void run(Object o) throws Exception
                     {
-
+                        Log.e(TAG, "Success");
                         Log.e(TAG, o.toString());
 
                     }
                 }).onError(new ErrorCallback()
-                {
-                    @Override
-                    public void onError(Throwable throwable)
-                    {
-
-                    }
-                });
+        {
+            @Override
+            public void onError(Throwable throwable)
+            {
+                Log.e(TAG, "Error: " + throwable.getMessage());
+            }
+        });
     }
 
     private void startSignalR()
@@ -106,34 +110,59 @@ public class SignalRService extends Service
         Platform.loadPlatformComponent(new AndroidPlatformComponent());
 
 //        String serverUrl = "http://transit.alwaysaware.org/signalr";
-        String serverUrl = "http://192.168.0.125:40722/chat/chat";
-
-        mHubConnection = new HubConnection(serverUrl);
-
-        String SERVER_HUB_CHAT = "ChatHub";
-
-        mHubProxy = mHubConnection.createHubProxy(SERVER_HUB_CHAT);
-
-        ClientTransport clientTransport = new ServerSentEventsTransport(mHubConnection.getLogger());
-
-        SignalRFuture<Void> signalRFuture = mHubConnection.start(clientTransport);
 
 
+//        mHubConnection = new HubConnection(serverUrl);
+//
+//        mHubProxy = mHubConnection.createHubProxy(SERVER_HUB_CHAT);
+//
+//
+//        ClientTransport clientTransport = new ServerSentEventsTransport(mHubConnection.getLogger());
+//
+//        SignalRFuture<Void> signalRFuture = mHubConnection.start(clientTransport);
+//
+//        try
+//        {
+//            signalRFuture.get();
+//        }
+//        catch (InterruptedException | ExecutionException e)
+//        {
+//            e.printStackTrace();
+//            return;
+//        }
+
+        HubConnection connection = new HubConnection(serverUrl);
+        HubProxy proxy = connection.createHubProxy(SERVER_HUB_CHAT);
+
+        SignalRFuture<Void> awaitConnection = connection.start();
         try
         {
-
-            signalRFuture.get();
-
+            awaitConnection.get();
         }
-        catch (InterruptedException | ExecutionException e)
+        catch (InterruptedException e)
         {
-
+            // TODO Auto-generated catch block
             e.printStackTrace();
-            return;
-
+        }
+        catch (ExecutionException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
-        sendData("");
+        //Invoke JoinGroup to start receiving broadcast messages
+        proxy.invoke(CLIENT_METHOD_RECEIVE, "Group1");
+
+        //Then call on() to handle the messages when they are received.
+        proxy.on(CLIENT_METHOD_RECEIVE, new SubscriptionHandler1<String>()
+        {
+            @Override
+            public void run(String msg)
+            {
+                Log.d("result := ", msg);
+            }
+        }, String.class);
+
     }
 
     @Override

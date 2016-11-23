@@ -10,6 +10,8 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements ILocationCallBack
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements ILocationCallBack
         super.onStop();
     }
 
-    public void sendMessage()
+    public void sendMessage(View view)
     {
         if (mBound)
         {
@@ -100,7 +102,9 @@ public class MainActivity extends AppCompatActivity implements ILocationCallBack
 //            EditText editText = (EditText) findViewById(R.id.edit_message);
 //            if (editText != null && editText.getText().length() > 0)
 //            {
-            String message = "Some Message from Karwa";
+            String message = "{\"left\": 20,\"top\": 20}";
+            Log.d("MainActivity", message);
+            Toast.makeText(this, "sending -> " + message, Toast.LENGTH_SHORT).show();
             mService.sendData(message);
 //            }
         }
@@ -116,9 +120,9 @@ public class MainActivity extends AppCompatActivity implements ILocationCallBack
         public void onServiceConnected(ComponentName name, IBinder service)
         {
             // We've bound to SignalRService, cast the IBinder and get SignalRService instance
-//            SignalRService.LocalBinder binder = (SignalRService.LocalBinder) service;
-//            mService = binder.getService();
-//            mBound = true;
+            SignalRService.LocalBinder binder = (SignalRService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
         }
 
         @Override
@@ -131,6 +135,5 @@ public class MainActivity extends AppCompatActivity implements ILocationCallBack
     @Override
     public void permissionsGranted()
     {
-        sendMessage();
     }
 }
